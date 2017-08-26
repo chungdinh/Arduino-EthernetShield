@@ -1,8 +1,18 @@
+* "Smart Garden"
+Copyright 2017 Chung Dinh*/
 #include <SPI.h>
 #include <Ethernet.h>
 #include <SD.h> 
+#include <Wire.h> 
 #define SD_CARD 4
 
+/* Địa chỉ của DS1307 */
+const byte DS1307 = 0x68;
+/* Số byte dữ liệu sẽ đọc từ DS1307 */
+const byte NumberOfFields = 7;
+ 
+/* khai báo các biến thời gian */
+int second, minute, hour, day, wday, month, year;
 byte ip[4]      = { 192,168,1,9 };//Địa chỉ IP của Ethernet Shield                  
 byte gateway[4] = { 192,168,0,254 };
 byte subnet[4]  = { 255,255,255,0 };
@@ -14,6 +24,7 @@ boolean LED_state[7] = {0};//Khởi tạo mảng có 7 phần tử để lưu tr
 
 char linebuf[80]; 
 int charCount = 0;
+int k;
 
 void setup() {
     //Khai báo chân kết nối LED
@@ -26,9 +37,11 @@ void setup() {
     pinMode(9, OUTPUT);
     
     Serial.begin(9600);
-
+Wire.begin();
+  /* cài đặt thời gian cho module */
+  setTime(21, 59, 57, 1, 6, 5, 17);
     pinMode(10, OUTPUT);
-    digitalWrite(10, HIGH);
+    digitalWrite(10, HIGH);//chân nháy đèn
     //Khởi tạo thẻ SD
     Serial.println("Initializing SD card...");
     if (!SD.begin(SD_CARD)) {
@@ -113,10 +126,78 @@ void loop() {
         delay(1);           
         client.stop(); 
     }
+    /* Đọc dữ liệu của DS1307 */
+  readDS1307();
+  /* Hiển thị thời gian ra Serial monitor */
+  digitalClockDisplay();
+  delay(1000);
 }
 
 
+ void readDS1307()
+{
+        Wire.beginTransmission(DS1307);
+        Wire.write((byte)0x00);
+        Wire.endTransmission();
+        Wire.requestFrom(DS1307, NumberOfFields);
+        
+        second = bcd2dec(Wire.read() & 0x7f);
+        minute = bcd2dec(Wire.read() );
+        hour   = bcd2dec(Wire.read() & 0x3f); // chế độ 24h.
+        wday   = bcd2dec(Wire.read() );
+        day    = bcd2dec(Wire.read() );
+        month  = bcd2dec(Wire.read() );
+        year   = bcd2dec(Wire.read() );
+        year += 2000;    
+}
+/* Chuyển từ format BCD (Binary-Coded Decimal) sang Decimal */
+int bcd2dec(byte num)
+{
+        return ((num/16 * 10) + (num % 16));
+}
+/* Chuyển từ Decimal sang BCD */
+int dec2bcd(byte num)
+{
+        return ((num/10 * 16) + (num % 10));
+}
  
+void digitalClockDisplay(){
+    // digital clock display of the time
+    Serial.print(hour);
+    printDigits(minute);
+    printDigits(second);
+    Serial.print(" ");
+    Serial.print(day);
+    Serial.print(" ");
+    Serial.print(month);
+    Serial.print(" ");
+    Serial.print(year); 
+    Serial.println(); 
+}
+ 
+void printDigits(int digits){
+    // các thành phần thời gian được ngăn cách bằng dấu :
+    Serial.print(":");
+        
+    if(digits < 10)
+        Serial.print('0');
+    Serial.print(digits);
+}
+ 
+/* cài đặt thời gian cho DS1307 */
+void setTime(byte hr, byte min, byte sec, byte wd, byte d, byte mth, byte yr)
+{
+        Wire.beginTransmission(DS1307);
+        Wire.write(byte(0x00)); // đặt lại pointer
+        Wire.write(dec2bcd(sec));
+        Wire.write(dec2bcd(min));
+        Wire.write(dec2bcd(hr));
+        Wire.write(dec2bcd(wd)); // day of week: Sunday = 1, Saturday = 7
+        Wire.write(dec2bcd(d)); 
+        Wire.write(dec2bcd(mth));
+        Wire.write(dec2bcd(yr));
+        Wire.endTransmission();
+}
 void html_logoff(EthernetClient &client){
     client.print(F(
                  "HTTP/1.1 401 Authorization Required\n"  
@@ -178,10 +259,10 @@ void html_authenticated(EthernetClient &client){
 void SetLEDs()
 {
     // LED 1 (pin 2)
-    if (strstr(linebuf, "LED1=1")) {
+    if ((strstr(linebuf, "LED1=1"))||(hour==22&&minute==0)) {
         LED_state[0] = 1;
         digitalWrite(2, HIGH);
-    } else if (strstr(linebuf, "LED1=0")) {
+    } else if ((strstr(linebuf, "LED1=0"))||(hour==22&&minute==1)) {
         LED_state[0] = 0;
         digitalWrite(2, LOW);
     }
@@ -254,7 +335,7 @@ void XML_response(EthernetClient &client)
     for (count = 2; count <= 5; count++)        // A2 to A5
     { 
         analog_val = analogRead(count);
-        int k=map(analog_val,0,1023,100,0);
+        k=map(analog_val,0,1023,100,0);
         client.print(F("<analog>"));
         client.print(k);
         client.println(F("</analog>"));
@@ -275,7 +356,7 @@ void XML_response(EthernetClient &client)
     
     // LED3
     client.print(F("<LED>"));
-    if (LED_state[2]) { client.print(F("on"));
+    if ((LED_state[2])||(k<=5)) { client.print(F("on"));
     } else { client.print(F("off")); }
     client.println(F("</LED>"));
     
