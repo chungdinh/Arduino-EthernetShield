@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <a href="http://dritgarden.ddns.net/">
+        <img src="https://uphinhnhanh.com/images/2017/05/06/Untitleddd2c6.png" alt="Untitleddd2c6.png" border="0"style="float:left;" />
+</a>
+		<meta http-equiv="Content-Type" content="application/vnd.wap.xhtml+xml; charset=utf-8" />
+		<TITLE>DRIT | DRIT GARDEN</TITLE>
+		<script language="JavaScript">
+			strLED1 = "";
+			strLED2 = "";
+			strLED3 = "";
+			strLED4 = "";
+			strLED5 = "";
+			strLED6 = "";
+			strLED7 = "";
+
+			var LED1_state = 0;
+			var LED2_state = 0;
+			var LED3_state = 0;
+			var LED4_state = 0;
+			var LED5_state = 0;
+			var LED6_state = 0;
+			var LED7_state = 0;
+
+			function GetArduinoIO()
+			{
+				nocache = "&nocache=" + Math.random() * 1000000;
+				var request = new XMLHttpRequest();
+				request.onreadystatechange = function()
+				{
+					if (this.readyState == 4) {
+						if (this.status == 200) {
+							if (this.responseXML != null) {
+								// XML file received - contains analog values, switch values and LED states
+								var count;
+								// get analog inputs
+								var num_an = this.responseXML.getElementsByTagName('analog').length;
+								for (count = 0; count < num_an; count++) {
+									document.getElementsByClassName("analog")[count].innerHTML =
+										this.responseXML.getElementsByTagName('analog')[count].childNodes[0].nodeValue;
+								}
+
+								// LED 1
+								if (this.responseXML.getElementsByTagName('LED')[0].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED1").innerHTML = "TẮT";
+									LED1_state = 1;
+									document.getElementById("State_LED1").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED1").innerHTML = "BẬT";
+									LED1_state = 0;
+									document.getElementById("State_LED1").innerHTML = "TẮT";
+								}
+
+								// LED 2
+								if (this.responseXML.getElementsByTagName('LED')[1].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED2").innerHTML = "TẮT";
+									LED2_state = 1;
+									document.getElementById("State_LED2").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED2").innerHTML = "BẬT";
+									LED2_state = 0;
+									document.getElementById("State_LED2").innerHTML = "TẮT";
+								}
+
+								// LED 3
+								if (this.responseXML.getElementsByTagName('LED')[2].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED3").innerHTML = "TẮT";
+									LED3_state = 1;
+									document.getElementById("State_LED3").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED3").innerHTML = "BẬT";
+									LED3_state = 0;
+									document.getElementById("State_LED3").innerHTML = "TẮT";
+								}
+
+								// LED 4
+								if (this.responseXML.getElementsByTagName('LED')[3].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED4").innerHTML = "TẮT";
+									LED4_state = 1;
+									document.getElementById("State_LED4").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED4").innerHTML = "BẬT";
+									LED4_state = 0;
+									document.getElementById("State_LED4").innerHTML = "TẮT";
+								}
+
+								// LED 5
+								if (this.responseXML.getElementsByTagName('LED')[4].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED5").innerHTML = "TẮT";
+									LED5_state = 1;
+									document.getElementById("State_LED5").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED5").innerHTML = "BẬT";
+									LED5_state = 0;
+									document.getElementById("State_LED5").innerHTML = "TẮT";
+								}
+
+								// LED 6
+								if (this.responseXML.getElementsByTagName('LED')[5].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED6").innerHTML = "TẮT";
+									LED6_state = 1;
+									document.getElementById("State_LED6").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED6").innerHTML = "BẬT";
+									LED6_state = 0;
+									document.getElementById("State_LED6").innerHTML = "TẮT";
+								}
+
+								// LED 7
+								if (this.responseXML.getElementsByTagName('LED')[6].childNodes[0].nodeValue === "on") {
+									document.getElementById("LED7").innerHTML = "TẮT";
+									LED7_state = 1
+									document.getElementById("State_LED7").innerHTML = "BẬT";
+								}
+								else {
+									document.getElementById("LED7").innerHTML = "BẬT";
+									LED7_state = 0;
+									document.getElementById("State_LED7").innerHTML = "TẮT";
+								}
+							}
+						}
+					}
+				}
+				// send HTTP GET request with LEDs to switch on/off if any
+				request.open("GET", "ajax_inputs" + strLED1 + strLED2 + strLED3 + strLED4 + strLED5 + strLED6 + strLED7 + nocache, true);
+				request.send(null);
+				setTimeout('GetArduinoIO()', 1000);
+				strLED1 = "";
+				strLED2 = "";
+				strLED3 = "";
+				strLED4 = "";
+				strLED5 = "";
+				strLED6 = "";
+				strLED7 = "";
+			}
+			function GetButton1()
+			{
+				if (LED1_state === 1) {
+					LED1_state = 0;
+					strLED1 = "&LED1=0";
+				}
+				else {
+					LED1_state = 1;
+					strLED1 = "&LED1=1";
+				}
+			}
+			function GetButton2()
+			{
+				if (LED2_state === 1) {
+					LED2_state = 0;
+					strLED2 = "&LED2=0";
+				}
+				else {
+					LED2_state = 1;
+					strLED2 = "&LED2=1";
+				}
+			}
+			function GetButton3()
+			{
+				if (LED3_state === 1) {
+					LED3_state = 0;
+					strLED3 = "&LED3=0";
+				}
+				else {
+					LED3_state = 1;
+					strLED3 = "&LED3=1";
+				}
+			}
+			function GetButton4()
+			{
+				if (LED4_state === 1) {
+					LED4_state = 0;
+					strLED4 = "&LED4=0";
+				}
+				else {
+					LED4_state = 1;
+					strLED4 = "&LED4=1";
+				}
+			}
+			function GetButton5()
+			{
+				if (LED5_state === 1) {
+					LED5_state = 0;
+					strLED5 = "&LED5=0";
+				}
+				else {
+					LED5_state = 1;
+					strLED5 = "&LED5=1";
+				}
+			}
+			function GetButton6()
+			{
+				if (LED6_state === 1) {
+					LED6_state = 0;
+					strLED6 = "&LED6=0";
+				}
+				else {
+					LED6_state = 1;
+					strLED6 = "&LED6=1";
+				}
+			}
+			function GetButton7()
+			{
+				if (LED7_state === 1) {
+					LED7_state = 0;
+					strLED7 = "&LED7=0";
+				}
+				else {
+					LED7_state = 1;
+					strLED7 = "&LED7=1";
+				}
+			}
+		</script>
+		<style type="text/css">
+			body {
+				background-color:#00676B;
+				background: linear-gradient(top, #CAE5E8 0%, #00676B 100%);
+				background:-o-linear-gradient(top, #CAE5E8 #00676B);
+				background:-moz-linear-gradient(top, #CAE5E8, #00676B);
+				background:-webkit-gradient(linear, left top, left bottom, from(#CAE5E8), to(#00676B));
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr ='#CAE5E8', endColorstr ='#00676B');
+				background: -ms-linear-gradient(top, #CAE5E8, #00676B);
+				background-attachment: fixed;
+				border: 0px;
+				margin: 0px;
+				padding: 0px;
+				color: #000000;
+				font-family: Sans Serif, Arial Western, Verdana;
+				font-size: small;
+				text-align: center;
+				align: center;
+			}
+			table {
+				border: 0px;
+				width: 60%;
+				align: center;
+				text-align: center;
+				padding: 0px;
+				vertical-align: middle;
+				border-spacing: 0px;
+				box-shadow: 15px 15px 15px #666666;
+				-moz-box-shadow: 15px 15px 15px #666666;
+				-webkit-box-shadow: 15px 15px 15px #666666;
+			}
+      tr {
+				height: 40px;
+			}
+			th {
+				background-color: #C8E2B1;
+				height: 50px;
+			}
+			.trh1 {
+				background-color: #CAE5E8;
+			}
+			.trh1:hover {
+				background-color: #E6F1D8;
+			}
+			.trh2 {
+				background-color: #99D1D3;
+			}
+			.trh2:hover {
+				background-color: #E6F1D8;
+			}
+			h1 {
+				margin: 25px;
+				font-family: Arial Western, Verdana;
+				text-shadow: 5px 3px 3px #999999;
+				font-size: 20pt;
+				font-weight: bold;
+				color: #CCFFFF;
+				border: 0px;
+			}
+			h6 {
+				font-size: 10pt;
+				font-weight: normal;
+				text-shadow: 1px 1px 1px #999999;
+				color: #000000;
+				margin: 20px;
+			}
+			.bogoc {
+				background-color: #ECECEC;
+				-moz-border-radius: 10px;
+				-webkit-border-radius: 10px;
+				border-radius: 10px;
+				box-shadow: 10px 10px 10px #666666;
+				-moz-box-shadow: 10px 10px 10px #666666;
+				-webkit-box-shadow: 10px 10px 10px #666666;
+			}
+			.shadow {
+				border: 1px solid #00676B;
+				box-shadow: 10px 10px 10px #666666;
+				-moz-box-shadow: 10px 10px 10px #666666;
+				-webkit-box-shadow: 10px 10px 10px #666666;
+			}
+			.button {
+				background-color: #293F5E;
+				color: #FFFFFF;
+				padding: 4px 35px 4px 35px;
+				text-align: center;
+				margin: 0px;
+				font-family: Arial Western, sans-serif;
+				font-weight: bold;
+				text-decoration: none;
+				-moz-border-radius: 5px;
+				-webkit-border-radius: 5px;
+				-o-border-radius: 5px;
+				border-radius: 5px;
+				border-color:black;
+				border-top:2px solid;
+				border-bottom:2px solid;
+				border-right:2px solid;
+				border-left:2px solid;
+			}
+			.button:link {
+				background-color: #293F5E;
+				color: #FFFFFF;
+			}
+			.button:visited {
+				background-color: #293F5E;
+				color: #FFFFFF;
+			}
+			.button:hover {
+				background-color: red;
+				color: #FFFFFF;
+			}
+			.button:active {
+				background-color: red;
+				color: #FFFFFF;
+			}
+			.IO_box {
+				background-color: #CAE5E8;
+				float: left;
+				margin: 50 20px 20px 0;
+				border: 1px solid blue;
+				padding: 50 20px 20 5px;
+				width: 250px;
+			}
+			.IO_box:hover {
+				background-color: #E6F1D8;
+				float: left;
+				margin: 50 20px 20px 0;
+				border: 1px solid blue;
+				padding: 50 20px 20 5px;
+				width: 250px;
+			}
+		</style>
+    </head>
+    <body onload="GetArduinoIO()"  align="center">
+      <br />
+    <h1>HỆ THỐNG ĐIỀU KHIỂN VÀ GIÁM SÁT VƯỜN RAU DRIT GARDEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+<br />
+  <h3>
+  <style>
+  .link{
+                color: green;
+                text-decoration: none;
+            }
+
+            a:visited{
+                color: green;
+            }
+            a:hover{
+                color: teal;
+            }
+        </style>
+    </head>
+    <body>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="http://dritgarden.ddns.net" >Trang chủ</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="https://www.facebook.com/DRITGarden/" target="_blank" >Giới thiệu</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="http://thingspeak.com/channels/196447" target="_blank" >Tài liệu</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="https://www.youtube.com/channel/UCw1XWQjCRyVwZXz6JrsIXbw" target="_blank" >Videos</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="https://cayenne.mydevices.com/cayenne/login" target="_blank" >Điều khiển</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class="link" href="http://dritgarden.ddns.net:81/index.htm" >Camera</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href='/logoff'>Đăng xuất</a>
+</body>
+  <hr />
+  <hr />
+<h2>Điều khiển thiết bị</h2>
+	<table align="center">
+		<tr>
+      <tr>
+			<th width="40%">Hoạt động /Thiết bị&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+			<th width="20%">Trạng thái</th>
+			<th width="40%">Bật/Tắt</th>
+		</tr>
+
+		<tr class="trh1">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Tự động
+			</td>
+			<td align="center">
+				<b><span id="State_LED1">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED1" onclick="GetButton1()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh2">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Tưới nước
+			</td>
+			<td align="center">
+				<b><span id="State_LED2">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED2" onclick="GetButton2()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh1">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+		Phun sương
+			</td>
+			<td align="center">
+				<b><span id="State_LED3">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED3" onclick="GetButton3()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh2">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Chiếu sáng
+			</td>
+			<td align="center">
+				<b><span id="State_LED4">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED4" onclick="GetButton4()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh1">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Camera
+			</td>
+			<td align="center">
+				<b><span id="State_LED5">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED5" onclick="GetButton5()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh2">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Cảnh báo
+			</td>
+			<td align="center">
+				<b><span id="State_LED6">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED6" onclick="GetButton6()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh1">
+			<td align="left">
+				&nbsp;
+				&nbsp;
+				Chống xâm nhập
+			</td>
+			<td align="center">
+				<b><span id="State_LED7">TẮT</span></b>
+			</td>
+			<td align="center">
+				<button class="button" type="button" id="LED7" onclick="GetButton7()">BẬT</button>
+			</td>
+		</tr>
+
+		<tr class="trh2">
+			<td align="center" colspan="3">
+				<h2>Thông số kỹ thuật</h2>
+        <b>A0: </b> Not use &nbsp&nbsp&nbsp&nbsp&nbsp
+				<b>A1: </b> Not use &nbsp&nbsp&nbsp&nbsp&nbsp
+        <b>Nhiệt độ: </b> <span class="analog">...</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+        <b>Độ ẩm: </b> <span class="analog">...</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+        <b>Độ ẩm đất: </b> <span class="analog">...</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+        <b>Cường độ ánh sáng: </b> <span class="analog">...</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+				<br />
+				<br />
+			</td>
+		</tr>
+	</table>
+	</div>
+	<br />
+  <hr />
+	<h6>Design by ĐINH VĂN CHUNG | DRIT GARDEN</h6>
+  Copyright © 2017 - ĐINH VĂN CHUNG<br />
+  Hotline: 0979 439 659<br />
+  Email:chungdinh1205@gmail.com
+  <br />
+  <br />
+    </body>
+</html>
