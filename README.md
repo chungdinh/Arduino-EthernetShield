@@ -1,2 +1,2 @@
 # Arduino-EthernetShield
-Arduino/EthernetShield control and moniter device
+Arduino/EthernetShield control and moniter devices.
